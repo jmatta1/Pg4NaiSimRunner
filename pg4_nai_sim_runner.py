@@ -6,7 +6,7 @@ import os
 
 MIN_ENERGY = 14.990  # minimum energy to simulate in MeV
 MAX_ENERGY = 15.000  # maximum energy to simulate in MeV (inclusive)
-SETP_ENERGY = 0.010  # step size of energy to simulate in MeV
+STEP_ENERGY = 0.010  # step size of energy to simulate in MeV
 # 0=WideFront,     1=WideBack
 # 2=LongNarrowTop, 3=LongNarrowBottom
 # 4=OppositePmt,    5=PmtEnd
