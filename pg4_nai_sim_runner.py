@@ -50,8 +50,7 @@ def main():
     qsub_list_file.close()
 
 
-QSUB_SCRIPT_TMPL = """
-#!/bin/bash
+QSUB_SCRIPT_TMPL = """#!/bin/bash
 #PBS -M mattajt@ornl.gov
 cd {output_dir:s}
 cp $NAI_EXEC ./NaiSim
