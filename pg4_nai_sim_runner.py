@@ -49,7 +49,7 @@ def main():
 # {run_macro_lines:s}
 QSUB_SCRIPT_TMPL = """
 #!/bin/bash
-#PBS -M {email:s}
+#PBS -M mattajt@ornl.gov
 cd {output_dir:s}
 mkdir {output_dir:s}/PG4
 cp -r $PG4_SRC {output_dir:s}/PG4
