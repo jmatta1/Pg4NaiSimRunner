@@ -4,7 +4,7 @@ large volume NaI detectors"""
 import sys
 import os
 
-MIN_ENERGY = 14.990  # minimum energy to simulate in MeV
+MIN_ENERGY = 15.000  # minimum energy to simulate in MeV
 MAX_ENERGY = 15.000  # maximum energy to simulate in MeV (inclusive)
 STEP_ENERGY = 0.010  # step size of energy to simulate in MeV
 # 0=WideFront,     1=WideBack
@@ -51,19 +51,14 @@ QSUB_SCRIPT_TMPL = """
 #!/bin/bash
 #PBS -M mattajt@ornl.gov
 cd {output_dir:s}
-mkdir {output_dir:s}/PG4
-cp -r $PG4_SRC {output_dir:s}/PG4
-mkdir {output_dir:s}/PG4/bld
-cd {output_dir:s}/PG4/bld
-cmake3 ../PROSPECT-G4 -DG4VIS_NONE=TRUE
-cd {output_dir:s}
+cp $NAI_EXEC ./NaiSim
 
 {run_macro_lines:s}
 rm -rf {output_dir:s}/PG4
 """
 
 # {macro_name:s}
-RUN_MACRO_LINE = "./PG4/bld/bin/PROSPECT-G4 {macro_name:s}\n"
+RUN_MACRO_LINE = "./NaiSim {macro_name:s}\n"
 
 # {file_name:s}
 # {energy_in_mev:5.2f}
