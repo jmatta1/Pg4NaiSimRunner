@@ -21,8 +21,9 @@ def main():
     energy = MIN_ENERGY
     while energy <= MAX_ENERGY:
         # make the folder
-        folder_name = os.path.join(output_dir, "{0:05.2f}".format(energy))
-        os.makedirs(folder_name)
+        folder_name = os.path.join(output_dir, "{0:05.2f}MeV".format(energy))
+        if not os.path.exists(folder_name):
+            os.makedirs(folder_name)
         for side, cnt, name in zip(SIDE_LIST, PRIMARY_COUNT, SIDE_FILE_NAMES):
             fmtdict = {}
             fmtdict["file_name"] = name + ".root"
