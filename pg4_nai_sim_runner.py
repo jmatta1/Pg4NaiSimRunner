@@ -12,7 +12,7 @@ STEP_ENERGY = 0.010  # step size of energy to simulate in MeV
 # 4=OppositePmt,    5=PmtEnd
 SIDE_LIST = [0, 2, 4]  # list of sides to simulate throwing gammas at
 SIDE_FILE_NAMES = ["side0", "side2", "side4"]
-PRIMARY_COUNT = [1000000, 1000000, 1000000]
+PRIMARY_COUNT = [8000000, 4000000, 1000000]
 
 
 def main():
