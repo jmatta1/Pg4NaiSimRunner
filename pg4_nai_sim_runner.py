@@ -47,7 +47,9 @@ def main():
 
 # {output_dir:s}
 # {run_macro_lines:s}
-QSUB_SCRIPT_TMPL = """#!/usr/bin/bash
+QSUB_SCRIPT_TMPL = """
+#!/bin/bash
+#PBS -M {email:s}
 cd {output_dir:s}
 mkdir {output_dir:s}/PG4
 cp -r $PG4_SRC {output_dir:s}/PG4
@@ -55,6 +57,7 @@ mkdir {output_dir:s}/PG4/bld
 cd {output_dir:s}/PG4/bld
 cmake3 ../PROSPECT-G4 -DG4VIS_NONE=TRUE
 cd {output_dir:s}
+
 {run_macro_lines:s}
 rm -rf {output_dir:s}/PG4
 """
@@ -66,20 +69,14 @@ RUN_MACRO_LINE = "./PG4/bld/bin/PROSPECT-G4 {macro_name:s}\n"
 # {energy_in_mev:5.2f}
 # {side_number:d}
 # {particle_count:d}
-MACRO_TMPL = """
-/output/setRunNum 0
+MACRO_TMPL = """/output/setRunNum 0
 /output/filename {file_name:s}
 /output/setRecordLevel 2
-
 /geom/mode BkgNaI
-
 /run/initialize
-
 /generator/module DetectorSurface
-
 /detectorsurface/energy {energy_in_mev:5.2f} MeV
 /detectorsurface/sidenumber {side_number:d}
-
 /run/beamOn {particle_count:d}
 """
 
