@@ -32,7 +32,7 @@ def main():
             macro_name = (name + ".mac")
             macro_path = os.path.join(folder_name, macro_name)
             outfile = open(macro_name, 'w')
-            outfile.write(MACRO_TMP.format(**fmtdict))
+            outfile.write(MACRO_TMPL.format(**fmtdict))
         energy += STEP_ENERGY
 
 # {output_dir:s}
