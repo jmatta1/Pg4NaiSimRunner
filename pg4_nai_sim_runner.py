@@ -4,7 +4,7 @@ large volume NaI detectors"""
 import sys
 import os
 
-MIN_ENERGY = 15.000  # minimum energy to simulate in MeV
+MIN_ENERGY = 00.000  # minimum energy to simulate in MeV
 MAX_ENERGY = 15.000  # maximum energy to simulate in MeV (inclusive)
 STEP_ENERGY = 0.010  # step size of energy to simulate in MeV
 # 0=WideFront,     1=WideBack
@@ -12,7 +12,7 @@ STEP_ENERGY = 0.010  # step size of energy to simulate in MeV
 # 4=OppositePmt,    5=PmtEnd
 SIDE_LIST = [0, 2, 4]  # list of sides to simulate throwing gammas at
 SIDE_FILE_NAMES = ["side0", "side2", "side4"]
-PRIMARY_COUNT = [36000000, 36000000, 36000000]
+PRIMARY_COUNT = [1000000, 1000000, 1000000]
 
 
 def main():
