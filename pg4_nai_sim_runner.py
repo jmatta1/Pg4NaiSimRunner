@@ -17,15 +17,14 @@ PRIMARY_COUNT = [1000000, 1000000, 1000000]
 
 def main():
     """Primary entry point for the code"""
-    base_dir = sys.argv[1]
+    qsub_list_file = open('qsub_list', 'w')
+    dir_pat = "{0:05.2f}_to_{1:05.2f}_MeV"
+    output_dir = os.path.join(sys.argv[1], dir_pat.format(0.0, 0.5))
     energy = MIN_ENERGY
-    qsub_list_file = open('qsub_list','w')
-    dir_patt = "{0:05.2f}_to_{1:05.2f}_MeV
-    output_dir = os.path.join(base_dir, dir_pat.format(0.0, 0.5))
     while energy <= MAX_ENERGY:
         if (energy*10).is_integer() and int(energy*10) % 5 == 0:
-            output_dir = os.path.join(base_dir, dir_pat.format(energy,
-                                                               energy+0.5))
+            output_dir = os.path.join(sys.argv[1], dir_pat.format(energy,
+                                                                  energy+0.5))
         # make the folder
         folder_name = os.path.join(output_dir, "{0:05.2f}MeV".format(energy))
         if not os.path.exists(folder_name):
