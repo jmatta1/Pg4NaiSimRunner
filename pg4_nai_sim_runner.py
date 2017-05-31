@@ -4,7 +4,7 @@ large volume NaI detectors"""
 import sys
 import os
 
-MIN_ENERGY = 00.000  # minimum energy to simulate in MeV
+MIN_ENERGY = 00.010  # minimum energy to simulate in MeV
 MAX_ENERGY = 15.000  # maximum energy to simulate in MeV (inclusive)
 STEP_ENERGY = 0.010  # step size of energy to simulate in MeV
 # 0=WideFront,     1=WideBack
@@ -17,16 +17,21 @@ PRIMARY_COUNT = [1000000, 1000000, 1000000]
 
 def main():
     """Primary entry point for the code"""
-    output_dir = sys.argv[1]
+    base_dir = sys.argv[1]
     energy = MIN_ENERGY
     qsub_list_file = open('qsub_list','w')
+    dir_patt = "{0:05.2f}_to_{1:05.2f}_MeV
+    output_dir = os.path.join(base_dir, dir_pat.format(0.0, 0.5))
     while energy <= MAX_ENERGY:
-        fmt_dir = {}
+        if (energy*10).is_integer() and int(energy*10) % 5 == 0:
+            output_dir = os.path.join(base_dir, dir_pat.format(energy,
+                                                               energy+0.5))
         # make the folder
         folder_name = os.path.join(output_dir, "{0:05.2f}MeV".format(energy))
         if not os.path.exists(folder_name):
             os.makedirs(folder_name)
         temp = []
+        fmt_dir = {}
         for side, cnt, name in zip(SIDE_LIST, PRIMARY_COUNT, SIDE_FILE_NAMES):
             fmtdict = {}
             fmtdict["file_name"] = name + ".root"
