@@ -19,6 +19,7 @@ def main():
     """Primary entry point for the code"""
     output_dir = sys.argv[1]
     energy = MIN_ENERGY
+    qsub_list_file = open('qsub_list','w')
     while energy <= MAX_ENERGY:
         fmt_dir = {}
         # make the folder
@@ -43,10 +44,12 @@ def main():
         qsub_script = file(os.path.join(folder_name, "sub_script.sh"), "w")
         qsub_script.write(QSUB_SCRIPT_TMPL.format(**fmt_dir))
         qsub_script.close()
+        qsub_list_file.write(os.path.join(folder_name, "sub_script.sh"))
+        qsub_list_file.write("\n")
         energy += STEP_ENERGY
+    qsub_list_file.close()
 
-# {output_dir:s}
-# {run_macro_lines:s}
+
 QSUB_SCRIPT_TMPL = """
 #!/bin/bash
 #PBS -M mattajt@ornl.gov
@@ -57,13 +60,10 @@ cp $NAI_EXEC ./NaiSim
 rm -rf {output_dir:s}/PG4
 """
 
-# {macro_name:s}
+
 RUN_MACRO_LINE = "./NaiSim {macro_name:s}\n"
 
-# {file_name:s}
-# {energy_in_mev:5.2f}
-# {side_number:d}
-# {particle_count:d}
+
 MACRO_TMPL = """/output/setRunNum 0
 /output/filename {file_name:s}
 /output/setRecordLevel 2
