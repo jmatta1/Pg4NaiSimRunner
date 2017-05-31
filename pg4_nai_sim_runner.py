@@ -20,25 +20,34 @@ def main():
     output_dir = sys.argv[1]
     energy = MIN_ENERGY
     while energy <= MAX_ENERGY:
+        fmt_dir = {}
         # make the folder
         folder_name = os.path.join(output_dir, "{0:05.2f}MeV".format(energy))
         if not os.path.exists(folder_name):
             os.makedirs(folder_name)
+        temp = []
         for side, cnt, name in zip(SIDE_LIST, PRIMARY_COUNT, SIDE_FILE_NAMES):
             fmtdict = {}
             fmtdict["file_name"] = name + ".root"
             fmtdict["energy_in_mev"] = energy
             fmtdict["side_number"] = side
             fmtdict["particle_count"] = cnt
-            macro_name = (name + ".mac")
-            macro_path = os.path.join(folder_name, macro_name)
-            outfile = open(macro_name, 'w')
+            mname = (name + ".mac")
+            macro_path = os.path.join(folder_name, mname)
+            outfile = open(macro_path, 'w')
             outfile.write(MACRO_TMPL.format(**fmtdict))
+            outfile.close()
+            temp.append(RUN_MACRO_LINE.format(macro_name=mname))
+        fmt_dir["run_macro_lines"] = "".join(temp)
+        fmt_dir["output_dir"] = folder_name
+        qsub_script = file(os.path.join(folder_name, "sub_script.sh"), "w")
+        qsub_script.write(QSUB_SCRIPT_TMPL.format(**fmt_dir))
+        qsub_script.close()
         energy += STEP_ENERGY
 
 # {output_dir:s}
 # {run_macro_lines:s}
-QSUB_SCRIPT_TMPL = """
+QSUB_SCRIPT_TMPL = """#!/usr/bin/bash
 cd {output_dir:s}
 mkdir {output_dir:s}/PG4
 cp -r $PG4_SRC {output_dir:s}/PG4
@@ -51,7 +60,7 @@ rm -rf {output_dir:s}/PG4
 """
 
 # {macro_name:s}
-RUN_MACRO_LINES = "./PG4/bld/bin/PROSPECT-G4 {macro_name:s}"
+RUN_MACRO_LINE = "./PG4/bld/bin/PROSPECT-G4 {macro_name:s}\n"
 
 # {file_name:s}
 # {energy_in_mev:5.2f}
