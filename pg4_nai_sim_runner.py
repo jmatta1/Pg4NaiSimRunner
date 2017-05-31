@@ -18,15 +18,10 @@ PRIMARY_COUNT = [1000000, 1000000, 1000000]
 def main():
     """Primary entry point for the code"""
     qsub_list_file = open('qsub_list', 'w')
-    dir_pat = "{0:05.2f}_to_{1:05.2f}_MeV"
-    output_dir = os.path.join(sys.argv[1], dir_pat.format(0.0, 0.5))
     energy = MIN_ENERGY
     while energy <= MAX_ENERGY:
-        if (energy*10).is_integer() and int(energy*10) % 5 == 0:
-            output_dir = os.path.join(sys.argv[1], dir_pat.format(energy,
-                                                                  energy+0.5))
-        # make the folder
-        folder_name = os.path.join(output_dir, "{0:05.2f}MeV".format(energy))
+        folder_name = make_folder_name(sys.argv[1], energy)
+        # make the folder if need be
         if not os.path.exists(folder_name):
             os.makedirs(folder_name)
         temp = []
@@ -52,6 +47,19 @@ def main():
         qsub_list_file.write("\n")
         energy += STEP_ENERGY
     qsub_list_file.close()
+
+
+def make_folder_name(base_dir, energy):
+    """Makes the directory name from the base directory and energy"""
+    dir_pat = "{0:05.2f}_to_{1:05.2f}_MeV"
+    temp = float(int(energy*2.0))/2.0
+    en_str = "{0:05.2f}MeV".format(energy)
+    if en_str in ["02.00MeV", "01.50MeV", "01.00MeV", "00.50MeV"]:
+        temp -=0.5
+    output_dir = os.path.join(sys.argv[1], dir_pat.format(temp + STEP_ENERGY,
+                                                          temp + 0.5))
+    ret_val = os.path.join(output_dir, "{0:05.2f}MeV".format(energy))
+    return ret_val
 
 
 QSUB_SCRIPT_TMPL = """#!/bin/bash
