@@ -29,7 +29,7 @@ void merge_hists()
     // for which the histogram was generated
     // areas 
     sum_hist->Add(hist1, hist2, 0.599566/(11050000.0), 0.317417/(5850000.0));
-    sum_hist->Add(hist3, 0.0830168/(3.0*1530000.0));
+    sum_hist->Add(hist3, 0.0830168/(1530000.0));
     outFile->cd();
     sum_hist->Write();
     delete sum_hist;
