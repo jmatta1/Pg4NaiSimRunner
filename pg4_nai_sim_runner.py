@@ -12,7 +12,12 @@ STEP_ENERGY = 0.010  # step size of energy to simulate in MeV
 # 4=OppositePmt,    5=PmtEnd
 SIDE_LIST = [0, 2, 4]  # list of sides to simulate throwing gammas at
 SIDE_FILE_NAMES = ["side0", "side2", "side4"]
-PRIMARY_COUNT = [8000000, 4000000, 1000000]
+PRIMARY_COUNT = [11050000, 5850000, 1530000]
+# the values of primary count were decided by saying there would be 160000
+# gammas thrown per square inch of surface area, the surfaces are
+# 16.25*4.25 = 69 + 1/16 in^2 --> 11,050,000
+# 16.25*2.25 = 36 + 9/16 in^2 -->  5,850,000
+#  4.25*2.25 =  9 + 9/16 in^2 -->  1,530,000
 
 
 def main():
