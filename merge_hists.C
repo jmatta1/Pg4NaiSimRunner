@@ -24,10 +24,12 @@ void merge_hists()
     sum_hist = (TH1D*)hist1->Clone();
     sum_hist->SetNameTitle("NormSumResp","Normalized Sum Response");
     // The number of counts thrown at each side was scaled to the surface area
-    // of each side by dividing each histogram by the number of primaries times
-    // 3, I get the correct average response for an isotropic source
-    sum_hist->Add(hist1, hist2, 1.0/(3.0*11050000.0), 1.0/(3.0*5850000.0));
-    sum_hist->Add(hist3, 1.0/(3.0*1530000.0));
+    // of each side by dividing each histogram by the number of primaries
+    // and multiplying by the fraction of the total area accounted for by side
+    // for which the histogram was generated
+    // areas 
+    sum_hist->Add(hist1, hist2, 0.599566/(11050000.0), 0.317417/(5850000.0));
+    sum_hist->Add(hist3, 0.0830168/(3.0*1530000.0));
     outFile->cd();
     sum_hist->Write();
     delete sum_hist;
