@@ -74,9 +74,9 @@ def make_folder_name(base_dir, energy):
     temp = float(int(energy*2.0))/2.0
     en_str = "{0:05.2f}MeV".format(energy)
     if en_str in ["02.00MeV", "01.50MeV", "01.00MeV", "00.50MeV"]:
-        temp -=0.5
-    output_dir = os.path.join(sys.argv[1], dir_pat.format(temp + STEP_ENERGY,
-                                                          temp + 0.5))
+        temp -= 0.5
+    output_dir = os.path.join(base_dir, dir_pat.format(temp + STEP_ENERGY,
+                                                       temp + 0.5))
     ret_val = os.path.join(output_dir, "{0:05.2f}MeV".format(energy))
     return ret_val
 
