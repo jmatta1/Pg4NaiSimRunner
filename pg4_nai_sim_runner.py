@@ -25,13 +25,14 @@ def main():
     """Primary entry point for the code"""
     qsub_list_file = open('qsub_list', 'w')
     energy = MIN_ENERGY
+    loop_num = 0
     while energy <= MAX_ENERGY:
         folder_name = make_folder_name(sys.argv[1], energy)
         # make the folder if need be
         if not os.path.exists(folder_name):
             os.makedirs(folder_name)
         # generate the macros
-        macro_list = generate_sim_runs(energy, folder_name)
+        macro_list = generate_sim_runs(energy, folder_name, loop_num)
         fmt_dic = {}
         fmt_dic["run_macro_lines"] = "".join(macro_list)
         fmt_dic["output_dir"] = folder_name
@@ -46,25 +47,30 @@ def main():
         qsub_list_file.write(os.path.join(folder_name, "sub_script.sh"))
         qsub_list_file.write("\n")
         energy += STEP_ENERGY
+        loop_num += 1
     qsub_list_file.close()
 
 
-def generate_sim_runs(energy, folder_name):
+def generate_sim_runs(energy, folder_name, loop_num):
     """Takes the energy and output folder name and generates the sub runs
     then returns the list of lines to run each macro"""
     temp = []
+    base_run = len(SIDE_LIST) * loop_num
+    run_num = 0
     for side, cnt, name in zip(SIDE_LIST, PRIMARY_COUNT, SIDE_FILE_NAMES):
         fmtdict = {}
         fmtdict["file_name"] = name + ".root"
         fmtdict["energy_in_mev"] = energy
         fmtdict["side_number"] = side
         fmtdict["particle_count"] = cnt
+        fmtdict["run_num"] = (base_run + run_num)
         mname = (name + ".mac")
         macro_path = os.path.join(folder_name, mname)
         outfile = open(macro_path, 'w')
         outfile.write(MACRO_TMPL.format(**fmtdict))
         outfile.close()
         temp.append(RUN_MACRO_LINE.format(macro_name=mname))
+        run_num += 1
     return temp
 
 
@@ -97,7 +103,7 @@ root -q -b merge_hists.C
 RUN_MACRO_LINE = "./NaiSim {macro_name:s}\n"
 
 
-MACRO_TMPL = """/output/setRunNum 0
+MACRO_TMPL = """/output/setRunNum {run_num:d}
 /output/filename {file_name:s}
 /output/setRecordLevel 2
 /geom/mode BkgNaI
