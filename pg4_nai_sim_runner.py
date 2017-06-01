@@ -3,6 +3,7 @@
 large volume NaI detectors"""
 import sys
 import os
+import shutil
 
 MIN_ENERGY = 00.010  # minimum energy to simulate in MeV
 MAX_ENERGY = 15.000  # maximum energy to simulate in MeV (inclusive)
@@ -29,29 +30,42 @@ def main():
         # make the folder if need be
         if not os.path.exists(folder_name):
             os.makedirs(folder_name)
-        temp = []
-        fmt_dir = {}
-        for side, cnt, name in zip(SIDE_LIST, PRIMARY_COUNT, SIDE_FILE_NAMES):
-            fmtdict = {}
-            fmtdict["file_name"] = name + ".root"
-            fmtdict["energy_in_mev"] = energy
-            fmtdict["side_number"] = side
-            fmtdict["particle_count"] = cnt
-            mname = (name + ".mac")
-            macro_path = os.path.join(folder_name, mname)
-            outfile = open(macro_path, 'w')
-            outfile.write(MACRO_TMPL.format(**fmtdict))
-            outfile.close()
-            temp.append(RUN_MACRO_LINE.format(macro_name=mname))
-        fmt_dir["run_macro_lines"] = "".join(temp)
-        fmt_dir["output_dir"] = folder_name
+        # generate the macros
+        macro_list = generate_sim_runs(energy, folder_name)
+        fmt_dic = {}
+        fmt_dic["run_macro_lines"] = "".join(macro_list)
+        fmt_dic["output_dir"] = folder_name
+        # now copy the root merge script into the directory'
+        merge_dest = os.path.join(folder_name, "merge_hists.C")
+        shutil.copyfile("./merge_hists.C", merge_dest)
+        # write the qsub script
         qsub_script = file(os.path.join(folder_name, "sub_script.sh"), "w")
-        qsub_script.write(QSUB_SCRIPT_TMPL.format(**fmt_dir))
+        qsub_script.write(QSUB_SCRIPT_TMPL.format(**fmt_dic))
         qsub_script.close()
+        # add the entry to the list of qsub scripts to run
         qsub_list_file.write(os.path.join(folder_name, "sub_script.sh"))
         qsub_list_file.write("\n")
         energy += STEP_ENERGY
     qsub_list_file.close()
+
+
+def generate_sim_runs(energy, folder_name):
+    """Takes the energy and output folder name and generates the sub runs
+    then returns the list of lines to run each macro"""
+    temp = []
+    for side, cnt, name in zip(SIDE_LIST, PRIMARY_COUNT, SIDE_FILE_NAMES):
+        fmtdict = {}
+        fmtdict["file_name"] = name + ".root"
+        fmtdict["energy_in_mev"] = energy
+        fmtdict["side_number"] = side
+        fmtdict["particle_count"] = cnt
+        mname = (name + ".mac")
+        macro_path = os.path.join(folder_name, mname)
+        outfile = open(macro_path, 'w')
+        outfile.write(MACRO_TMPL.format(**fmtdict))
+        outfile.close()
+        temp.append(RUN_MACRO_LINE.format(macro_name=mname))
+    return temp
 
 
 def make_folder_name(base_dir, energy):
@@ -69,11 +83,14 @@ def make_folder_name(base_dir, energy):
 
 QSUB_SCRIPT_TMPL = """#!/bin/bash
 #PBS -M mattajt@ornl.gov
+
 cd {output_dir:s}
 cp $NAI_EXEC ./NaiSim
 
 {run_macro_lines:s}
-rm -rf {output_dir:s}/PG4
+rm ./NaiSim
+
+root -q -b merge_hists.C
 """
 
 
